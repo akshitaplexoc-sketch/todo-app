@@ -1,3 +1,23 @@
+TaskFlow — Todo App
+
+A responsive Todo Management Dashboard built with React.js + Vite for managing daily tasks.
+
+Features
+Add, edit & delete tasks
+Mark tasks completed/important
+Search tasks
+Calendar & reminders
+LocalStorage persistence
+Responsive UI
+GitHub Pages deployment
+Tech Stack
+
+React.js Vite JavaScript CSS React Hooks Context API React Router LocalStorage
+
+Run Locally
+npm install
+npm run dev
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
