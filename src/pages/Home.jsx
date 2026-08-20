@@ -19,7 +19,7 @@ function Home() {
   ).length;
 
   const important = todos.filter(
-    (todo) => todo.important
+    (todo) => todo.important && !todo.completed
   ).length;
 
   // ================= PERCENTAGES =================
@@ -147,13 +147,6 @@ function Home() {
               <p>
                 Start by adding your first task.
               </p>
-
-              <button
-                onClick={() => navigate("/tasks")}
-                className="primary-btn"
-              >
-                Create Task
-              </button>
 
             </div>
 

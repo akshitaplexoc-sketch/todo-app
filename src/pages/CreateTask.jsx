@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTodos } from "../context/TodoContext";
 
 import TodoForm from "../components/TodoForm";
-import { useTodos } from "../context/TodoContext";
 
 function CreateTask() {
   const navigate = useNavigate();
@@ -13,22 +13,6 @@ function CreateTask() {
   } = useTodos();
 
   const editingTodo = location.state?.todo || null;
-
-  const handleAdd = (
-    text,
-    important,
-    date,
-    reminder
-  ) => {
-    addTodo(
-      text,
-      important,
-      date,
-      reminder
-    );
-
-    navigate("/tasks");
-  };
 
   const handleUpdate = (
     id,
@@ -48,39 +32,61 @@ function CreateTask() {
     navigate("/tasks");
   };
 
-  const handleCancel = () => {
+  const handleAdd = (
+    text,
+    important,
+    date,
+    reminder
+  ) => {
+    addTodo(
+      text,
+      important,
+      date,
+      reminder
+    );
+
     navigate("/tasks");
   };
 
   return (
     <div className="create-task-page">
 
-      <div className="page-title">
+      {/* HEADER */}
 
-        <h1>
-          {editingTodo
-            ? "Edit Task"
-            : "Create New Task"}
-        </h1>
+      <div className="create-task-header">
 
-        <p>
-          {editingTodo
-            ? "Update your task details."
-            : "Add a new task and stay organized."}
-        </p>
+        <button
+          className="back-btn"
+          onClick={() => navigate(-1)}
+        >
+          ← Back
+        </button>
+
+        <div>
+          <h1>
+            {editingTodo
+              ? "Edit Task"
+              : "Create New Task"}
+          </h1>
+
+          <p>
+            {editingTodo
+              ? "Update your task details."
+              : "Add a new task and stay organized."}
+          </p>
+        </div>
 
       </div>
 
-      <div className="create-task-container">
 
-        <TodoForm
-          addTodo={handleAdd}
-          editingTodo={editingTodo}
-          updateTodo={handleUpdate}
-          cancelEdit={handleCancel}
-        />
+      {/* FORM */}
 
-      </div>
+      <TodoForm
+        addTodo={handleAdd}
+        editingTodo={editingTodo}
+        updateTodo={handleUpdate}
+        cancelEdit={() => navigate("/tasks")}
+      />
 
     </div>
   );

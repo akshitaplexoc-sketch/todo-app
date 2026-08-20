@@ -1,61 +1,87 @@
-import { useState } from "react";
-import { useTodos } from "../context/TodoContext"; // ⚠️ adjust path if your TodoContext file lives elsewhere
-import TodoItem from "../components/TodoItem"; // ⚠️ adjust path to match your project
+import { useNavigate } from "react-router-dom";
+import { useTodos } from "../context/TodoContext";
+import TodoItem from "../components/TodoItem";
 
 function Important() {
-  const { todos, toggleTodo, deleteTodo, editTodo } = useTodos();
-  const [search, setSearch] = useState("");
+  const { todos, toggleTodo, deleteTodo } = useTodos();
+  const navigate = useNavigate();
 
-  const importantTodos = todos
-    .filter((todo) => todo.important)
-    .filter((todo) =>
-      todo.text.toLowerCase().includes(search.toLowerCase())
-    );
+  // Only pending + important tasks
+  const importantTodos = todos.filter(
+    (todo) => todo.important && !todo.completed
+  );
+
+  const handleEdit = (todo) => {
+    navigate("/create-task", {
+      state: {
+        todo,
+      },
+    });
+  };
 
   return (
-    <div className="important-page">
+    <div className="todos-page">
 
-      <div className="page-title">
+      <div className="page-title task-page-header">
         <div>
           <h1>Important Tasks ⭐</h1>
-          <p>Your priority tasks.</p>
-        </div>
-      </div>
-
-      <div className="search-bar">
-        <span className="search-icon">🔍</span>
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search important tasks..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
-      {importantTodos.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">⭐</div>
-          <h3>No important tasks</h3>
           <p>
-            {search
-              ? "No tasks match your search."
-              : "Mark tasks as important to see them here."}
+            Your important pending tasks.
           </p>
         </div>
-      ) : (
-        <div className="simple-list">
-          {importantTodos.map((todo) => (
+
+        <button
+          className="primary-btn"
+          onClick={() => navigate("/create-task")}
+        >
+          + Create New Task
+        </button>
+      </div>
+
+      <div className="task-stats">
+
+        <div className="stat-card">
+          <span>Important</span>
+          <strong>{importantTodos.length}</strong>
+        </div>
+
+      </div>
+
+      <div className="todo-list">
+
+        {importantTodos.length === 0 ? (
+
+          <div className="empty-state">
+
+            <div className="empty-icon">
+              ⭐
+            </div>
+
+            <h3>
+              No important tasks
+            </h3>
+
+            <p>
+              You have no pending important tasks.
+            </p>
+
+          </div>
+
+        ) : (
+
+          importantTodos.map((todo) => (
             <TodoItem
               key={todo.id}
               todo={todo}
               toggleTodo={toggleTodo}
               deleteTodo={deleteTodo}
-              editTodo={editTodo}
+              editTodo={handleEdit}
             />
-          ))}
-        </div>
-      )}
+          ))
+
+        )}
+
+      </div>
 
     </div>
   );

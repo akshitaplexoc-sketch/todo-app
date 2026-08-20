@@ -1,5 +1,10 @@
 import { NavLink } from "react-router-dom";
 
+<NavLink to="/">
+  🏠
+  <span>Dashboard</span>
+</NavLink> 
+
 function Sidebar() {
   return (
     <aside className="sidebar">

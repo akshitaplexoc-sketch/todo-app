@@ -101,23 +101,19 @@ function Todos() {
     }
   };
 
-  // =========================
-  // COUNTS
-  // =========================
+// =========================
+// COUNTS
+// =========================
 
-  const total = todos.length;
+const total = todos.length;
 
-  const completed = todos.filter(
-    (todo) => todo.completed
-  ).length;
+const completed = todos.filter(
+  (todo) => todo.completed
+).length;
 
-  const pending = todos.filter(
-    (todo) => !todo.completed
-  ).length;
-
-  const important = todos.filter(
-    (todo) => todo.important
-  ).length;
+const pending = todos.filter(
+  (todo) => !todo.completed
+).length;
 
   return (
     <div className="todos-page">
@@ -214,15 +210,17 @@ function Todos() {
         </div>
 
 
-        <div
-          className="task-stat-card important-stat"
-          onClick={() =>
-            navigate("/tasks?filter=important")
-          }
-        >
+       <div className="stat-card">
           <span>Important</span>
-          <strong>{important}</strong>
-        </div>
+
+          <strong>
+            {
+              todos.filter(
+                (todo) => todo.important && !todo.completed
+              ).length
+            }
+        </strong>
+      </div>
 
       </div>
 
@@ -297,18 +295,6 @@ function Todos() {
                 : "Create your first task to get started."}
 
             </p>
-
-
-            {!search && filter === "all" && (
-              <button
-                className="primary-btn"
-                onClick={() =>
-                  navigate("/create-task")
-                }
-              >
-                + Create Task
-              </button>
-            )}
 
           </div>
 

@@ -3773,3 +3773,56 @@ button {
     padding: 9px 14px;
   }
 }
+
+/* =================================
+   CREATE TASK PAGE
+================================= */
+
+.create-task-page {
+  max-width: 850px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+.create-task-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.create-task-header h1 {
+  margin: 0;
+  color: #4a2f23;
+}
+
+.create-task-header p {
+  margin: 5px 0 0;
+  color: #8a7161;
+}
+
+
+/* Back Button */
+
+.back-btn {
+  border: 1px solid #dfcdbd;
+  background: #f7ede4;
+
+  color: #704b38;
+
+  padding: 10px 16px;
+
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #ead8c5;
+  transform: translateX(-2px);
+}

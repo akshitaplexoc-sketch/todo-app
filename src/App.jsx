@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {  Routes, Route } from "react-router-dom";
 
 import Sidebar from "./components/Sidebar";
 
@@ -13,12 +13,13 @@ import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    
       <div className="app">
         <Sidebar />
 
         <main className="main-content">
           <Routes>
+            
             <Route path="/" element={<Home />} />
             <Route path="/tasks" element={<Todos />} />
             <Route path="/create-task"element={<CreateTask />}/>
@@ -30,7 +31,7 @@ function App() {
           </Routes>
         </main>
       </div>
-    </BrowserRouter>
+
   );
 }
 
