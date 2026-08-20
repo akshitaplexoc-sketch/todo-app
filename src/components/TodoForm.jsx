@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+import DatePicker from "./Datepicker";
+import ReminderPicker from "./ReminderPicker";
 
 function TodoForm({
   addTodo,
@@ -6,161 +9,210 @@ function TodoForm({
   updateTodo,
   cancelEdit
 }) {
+  const [text, setText] = useState(
+    editingTodo?.text || ""
+  );
 
-  const [text, setText] = useState("");
-  const [important, setImportant] = useState(false);
-  const [date, setDate] = useState("");
-  const [reminder, setReminder] = useState("");
+  const [important, setImportant] =
+    useState(
+      editingTodo?.important || false
+    );
 
-  useEffect(() => {
+  const [date, setDate] = useState(
+    editingTodo?.date || ""
+  );
 
-    if (editingTodo) {
+  const [reminder, setReminder] =
+    useState(
+      editingTodo?.reminder || ""
+    );
 
-      setText(editingTodo.text || "");
-      setImportant(editingTodo.important || false);
-      setDate(editingTodo.date || "");
-      setReminder(editingTodo.reminder || "");
+  const handleDateChange = (
+    newDate
+  ) => {
+    setDate(newDate);
 
-    } else {
+    /*
+      If reminder date is after
+      the new task date, remove it.
+    */
 
-      setText("");
-      setImportant(false);
-      setDate("");
+    if (
+      reminder &&
+      newDate &&
+      reminder.slice(0, 10) > newDate
+    ) {
       setReminder("");
-
     }
-
-  }, [editingTodo]);
-
+  };
 
   const handleSubmit = (e) => {
-
     e.preventDefault();
 
     if (!text.trim()) {
       return;
     }
 
+    /*
+      Extra safety:
+      Reminder cannot be after task date.
+    */
 
-    if (editingTodo) {
-
-      updateTodo(
-        editingTodo.id,
-        text,
-        important,
-        date,
-        reminder
+    if (
+      reminder &&
+      date &&
+      reminder.slice(0, 10) > date
+    ) {
+      alert(
+        "Reminder date cannot be after the task date."
       );
 
-    } else {
-
-      addTodo(
-        text,
-        important,
-        date,
-        reminder
-      );
-
+      return;
     }
 
+    if (editingTodo) {
+      updateTodo(
+        editingTodo.id,
+        text.trim(),
+        important,
+        date,
+        reminder
+      );
+    } else {
+      addTodo(
+        text.trim(),
+        important,
+        date,
+        reminder
+      );
+    }
 
     setText("");
     setImportant(false);
     setDate("");
     setReminder("");
-
   };
 
-
   return (
-
     <form
       className="todo-form"
       onSubmit={handleSubmit}
     >
+      <div className="form-heading">
+        <h2>
+          {editingTodo
+            ? "Edit Task"
+            : "Create New Task"}
+        </h2>
 
-      <h2>
-        {editingTodo
-          ? "Edit Task"
-          : "Create New Task"}
-      </h2>
+        <p>
+          {editingTodo
+            ? "Update your task details."
+            : "Add details to organize your task."}
+        </p>
+      </div>
 
+      {/* TASK */}
 
-      <label>Task</label>
+      <div className="form-group">
+        <label htmlFor="task">
+          Task
+        </label>
 
-      <input
-        type="text"
-        placeholder="Enter your task..."
-        value={text}
-        onChange={(e) =>
-          setText(e.target.value)
-        }
-      />
+        <input
+          id="task"
+          type="text"
+          placeholder="What do you need to do?"
+          value={text}
+          onChange={(e) =>
+            setText(e.target.value)
+          }
+        />
+      </div>
 
+      {/* TASK DATE */}
 
-      <label>Date</label>
-
-      <input
-        type="date"
+      <DatePicker
+        label="Task Date"
         value={date}
-        onChange={(e) =>
-          setDate(e.target.value)
-        }
+        onChange={handleDateChange}
+        placeholder="Select task date"
       />
 
+      {/* REMINDER */}
 
-      <label>Reminder</label>
+      <div className="reminder-box">
+        <div className="reminder-heading">
+          <span className="reminder-icon">
+            🔔
+          </span>
 
-      <input
-        type="datetime-local"
-        value={reminder}
-        onChange={(e) =>
-          setReminder(e.target.value)
-        }
-      />
+          <div>
+            <h3>Set Reminder</h3>
 
+            <p>
+              Choose when you want to be
+              reminded.
+            </p>
+          </div>
+        </div>
 
-      <label className="checkbox-label">
+        <ReminderPicker
+          value={reminder}
+          onChange={setReminder}
+          maxDate={date}
+        />
+      </div>
 
+      {/* IMPORTANT */}
+
+      <label className="important-checkbox">
         <input
           type="checkbox"
           checked={important}
           onChange={(e) =>
-            setImportant(e.target.checked)
+            setImportant(
+              e.target.checked
+            )
           }
         />
 
-        Mark as Important ⭐
+        <span className="custom-checkbox">
+          {important ? "✓" : ""}
+        </span>
 
+        <span>
+          Mark as Important
+        </span>
+
+        <span className="star">
+          ★
+        </span>
       </label>
 
+      {/* BUTTONS */}
 
-      <button
-        type="submit"
-        className="primary-btn full-btn"
-      >
-
-        {editingTodo
-          ? "Update Task"
-          : "Add Task"}
-
-      </button>
-
-
-      {editingTodo && (
-
+      <div className="form-buttons">
         <button
-          type="button"
-          className="secondary-btn full-btn"
-          onClick={cancelEdit}
+          type="submit"
+          className="primary-btn full-btn"
         >
-          Cancel
+          {editingTodo
+            ? "Update Task"
+            : "Add Task"}
         </button>
 
-      )}
-
+        {editingTodo && (
+          <button
+            type="button"
+            className="secondary-btn full-btn"
+            onClick={cancelEdit}
+          >
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
-
   );
 }
 

@@ -11,7 +11,7 @@ function Sidebar() {
       <div className="profile">
         <div className="profile-avatar">A</div>
 
-        <h3>Akshu</h3>
+        <h3>Akshita</h3>
         <p>Student</p>
       </div>
 

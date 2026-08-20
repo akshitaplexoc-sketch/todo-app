@@ -51,6 +51,7 @@ function TodoItem({
       <div className="todo-actions">
 
         <button
+          type="button"
           onClick={() =>
             editTodo(todo)
           }
@@ -61,6 +62,7 @@ function TodoItem({
         </button>
 
         <button
+          type="button"
           onClick={() =>
             deleteTodo(todo.id)
           }

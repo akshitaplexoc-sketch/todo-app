@@ -1,85 +1,214 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTodos } from "../context/TodoContext";
 
 function Reminders() {
+  const { todos, deleteTodo } = useTodos();
 
-  const [todos, setTodos] = useState([]);
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-
-    const saved =
-      JSON.parse(localStorage.getItem("todos")) || [];
-
-    setTodos(
-      saved.filter((todo) => todo.reminder)
+  // Only tasks having a reminder
+  const reminderTodos = todos
+    .filter((todo) => todo.reminder)
+    .filter((todo) =>
+      todo.text.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.reminder) - new Date(b.reminder)
     );
 
-  }, []);
+  // Format reminder date and time
+  const formatReminder = (reminder) => {
+    if (!reminder) return "";
 
+    const date = new Date(reminder);
+
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   return (
+    <div className="reminders-page">
 
-    <div>
-
-      <div className="page-title">
+      {/* Header */}
+      <div className="page-title reminders-header">
 
         <div>
           <h1>Reminders 🔔</h1>
-          <p>Don't miss your important tasks.</p>
+
+          <p>
+            Keep track of your upcoming task reminders.
+          </p>
         </div>
+
+        <button
+          className="primary-btn"
+          onClick={() => navigate("/create-task")}
+        >
+          + Create Task
+        </button>
 
       </div>
 
+      {/* Search */}
+      <div className="search-box">
 
-      {todos.length === 0 ? (
+        <input
+          type="text"
+          placeholder="Search reminders..."
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+        />
 
-        <div className="empty-state">
+        <button type="button">
+          🔍
+        </button>
 
-          <div>🔔</div>
+      </div>
 
-          <h3>No reminders</h3>
+      {/* Reminder Count */}
+      <div className="reminder-count">
+        {reminderTodos.length}{" "}
+        {reminderTodos.length === 1
+          ? "Reminder"
+          : "Reminders"}
+      </div>
 
-          <p>
-            Add a reminder while creating a task.
-          </p>
+      {/* Reminder List */}
+      <div className="reminder-list">
 
-        </div>
+        {reminderTodos.length === 0 ? (
 
-      ) : (
+          <div className="empty-state">
 
-        <div className="simple-list">
+            <div className="empty-icon">
+              🔔
+            </div>
 
-          {todos.map((todo) => (
+            <h3>
+              {search
+                ? "No reminders found"
+                : "No reminders set"}
+            </h3>
+
+            <p>
+              {search
+                ? "Try searching for another task."
+                : "Create a task and set a reminder for it."}
+            </p>
+
+            {!search && (
+              <button
+                className="primary-btn"
+                onClick={() =>
+                  navigate("/create-task")
+                }
+              >
+                + Create Task
+              </button>
+            )}
+
+          </div>
+
+        ) : (
+
+          reminderTodos.map((todo) => (
 
             <div
-              className="simple-task"
+              className={`reminder-card ${
+                todo.completed
+                  ? "reminder-completed"
+                  : ""
+              }`}
               key={todo.id}
             >
 
-              <span>🔔</span>
+              {/* Reminder Icon */}
+              <div className="reminder-icon">
+                🔔
+              </div>
 
-              <div>
+              {/* Content */}
+              <div className="reminder-content">
 
-                <h3>{todo.text}</h3>
+                <h3>
+                  {todo.text}
+                </h3>
 
-                <p>
-                  Reminder:{" "}
-                  {new Date(
-                    todo.reminder
-                  ).toLocaleString()}
-                </p>
+                <div className="reminder-meta">
+
+                  <span>
+                    📅 {formatReminder(todo.reminder)}
+                  </span>
+
+                  {todo.important && (
+                    <span className="important-label">
+                      ⭐ Important
+                    </span>
+                  )}
+
+                  <span
+                    className={
+                      todo.completed
+                        ? "status-completed"
+                        : "status-pending"
+                    }
+                  >
+                    {todo.completed
+                      ? "✓ Completed"
+                      : "⏳ Pending"}
+                  </span>
+
+                </div>
+
+              </div>
+
+              {/* Actions */}
+              <div className="reminder-actions">
+
+                <button
+                  className="icon-btn"
+                  title="Edit"
+                  onClick={() =>
+                    navigate("/create-task", {
+                      state: { todo },
+                    })
+                  }
+                >
+                  ✏️
+                </button>
+
+                <button
+                  className="icon-btn delete-btn"
+                  title="Delete"
+                  onClick={() =>
+                    deleteTodo(todo.id)
+                  }
+                >
+                  🗑️
+                </button>
 
               </div>
 
             </div>
 
-          ))}
+          ))
 
-        </div>
+        )}
 
-      )}
+      </div>
 
     </div>
-
   );
 }
 

@@ -48,8 +48,12 @@ export function TodoProvider({ children }) {
       prev.filter((todo) => todo.id !== id)
     );
   };
+  const deleteAllTodos = () => {
+  setTodos([]);
+  // localStorage.removeItem("todos");
+  };
 
-  // Edit
+  // update todo
   const updateTodo = (
     id,
     text,
@@ -79,6 +83,7 @@ export function TodoProvider({ children }) {
         addTodo,
         toggleTodo,
         deleteTodo,
+        deleteAllTodos,
         updateTodo,
       }}
     >
@@ -88,6 +93,8 @@ export function TodoProvider({ children }) {
 }
 
 // Custom Hook
+// This context file intentionally exports both the provider component and its hook.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTodos() {
   return useContext(TodoContext);
 }

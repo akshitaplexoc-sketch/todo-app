@@ -1,69 +1,47 @@
-import { useState } from "react";
+import { useTodos } from "../context/TodoContext";
 
 function Settings() {
+  const { deleteAllTodos, todos } = useTodos();
 
-  const [darkMode, setDarkMode] =
-    useState(false);
+  const handleDeleteAll = () => {
+    if (todos.length === 0) {
+      alert("There are no tasks to delete.");
+      return;
+    }
 
-  const clearTasks = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all tasks?"
+    );
 
-    localStorage.removeItem("todos");
-
-    alert("All tasks deleted!");
-
+    if (confirmed) {
+      deleteAllTodos();
+    }
   };
 
-
   return (
-
-    <div>
+    <div className="settings-page">
 
       <div className="page-title">
-
         <div>
-          <h1>Settings ⚙</h1>
-          <p>Manage your application.</p>
+          <h1>Settings</h1>
+          <p>Manage your TaskFlow settings.</p>
         </div>
-
       </div>
-
 
       <div className="settings-card">
 
-        <div className="setting-row">
+        <div className="settings-section">
+          <h2>Task Management</h2>
 
-          <div>
-            <h3>Dark Mode</h3>
-            <p>
-              Change the appearance of the app.
-            </p>
-          </div>
-
-          <input
-            type="checkbox"
-            checked={darkMode}
-            onChange={(e) =>
-              setDarkMode(e.target.checked)
-            }
-          />
-
-        </div>
-
-
-        <div className="setting-row">
-
-          <div>
-            <h3>Delete All Tasks</h3>
-            <p>
-              Permanently remove all saved tasks.
-            </p>
-          </div>
+          <p>
+            Remove all tasks from your TaskFlow application.
+          </p>
 
           <button
-            className="danger-btn"
-            onClick={clearTasks}
+            className="delete-all-btn"
+            onClick={handleDeleteAll}
           >
-            Delete
+            🗑 Delete All Tasks
           </button>
 
         </div>
@@ -71,7 +49,6 @@ function Settings() {
       </div>
 
     </div>
-
   );
 }
 

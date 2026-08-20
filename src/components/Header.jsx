@@ -11,7 +11,7 @@ function Header() {
     <header className="header">
 
       <div>
-        <h1>Welcome back, Akshu 👋</h1>
+        <h1>Welcome back, Akshita 👋</h1>
         <p>Let's organize your tasks for today.</p>
       </div>
 

@@ -1,19 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useTodos } from "../context/TodoContext"; // ⚠️ adjust path if your TodoContext file lives elsewhere
+import TodoItem from "../components/TodoItem"; // ⚠️ adjust path to match your project
 
 function Important() {
-  const [todos, setTodos] = useState([]);
+  const { todos, toggleTodo, deleteTodo, editTodo } = useTodos();
+  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    const savedTodos =
-      JSON.parse(localStorage.getItem("todos")) || [];
-
-    setTodos(
-      savedTodos.filter((todo) => todo.important)
+  const importantTodos = todos
+    .filter((todo) => todo.important)
+    .filter((todo) =>
+      todo.text.toLowerCase().includes(search.toLowerCase())
     );
-  }, []);
 
   return (
-    <div>
+    <div className="important-page">
+
       <div className="page-title">
         <div>
           <h1>Important Tasks ⭐</h1>
@@ -21,38 +22,41 @@ function Important() {
         </div>
       </div>
 
-      {todos.length === 0 ? (
+      <div className="search-bar">
+        <span className="search-icon">🔍</span>
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search important tasks..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      {importantTodos.length === 0 ? (
         <div className="empty-state">
-          <div>⭐</div>
-
+          <div className="empty-icon">⭐</div>
           <h3>No important tasks</h3>
-
           <p>
-            Mark tasks as important to see them here.
+            {search
+              ? "No tasks match your search."
+              : "Mark tasks as important to see them here."}
           </p>
         </div>
       ) : (
         <div className="simple-list">
-          {todos.map((todo) => (
-            <div
-              className="simple-task"
+          {importantTodos.map((todo) => (
+            <TodoItem
               key={todo.id}
-            >
-              <span>⭐</span>
-
-              <div>
-                <h3>{todo.text}</h3>
-
-                <p>
-                  {todo.completed
-                    ? "Completed"
-                    : "Pending"}
-                </p>
-              </div>
-            </div>
+              todo={todo}
+              toggleTodo={toggleTodo}
+              deleteTodo={deleteTodo}
+              editTodo={editTodo}
+            />
           ))}
         </div>
       )}
+
     </div>
   );
 }

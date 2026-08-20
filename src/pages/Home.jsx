@@ -1,51 +1,67 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import Header from "../components/Header";
+import { useTodos } from "../context/TodoContext";
 
 function Home() {
-
   const navigate = useNavigate();
+  const { todos } = useTodos();
 
-  const [todos, setTodos] = useState([]);
+  // ================= TASK COUNTS =================
 
-  useEffect(() => {
-
-    const savedTodos = JSON.parse(
-      localStorage.getItem("todos")
-    ) || [];
-
-    setTodos(savedTodos);
-
-  }, []);
+  const total = todos.length;
 
   const completed = todos.filter(
     (todo) => todo.completed
   ).length;
 
-  const pending = todos.length - completed;
+  const pending = todos.filter(
+    (todo) => !todo.completed
+  ).length;
 
   const important = todos.filter(
     (todo) => todo.important
   ).length;
 
+  // ================= PERCENTAGES =================
+
+  const completedPercentage =
+    total > 0
+      ? Math.round((completed / total) * 100)
+      : 0;
+
+
   return (
-    <div>
+    <div className="home-page">
 
       <Header />
 
+      {/* ================= STAT CARDS ================= */}
+
       <div className="dashboard-grid">
 
-        <div className="stat-card">
+        {/* TOTAL */}
+
+        <div
+          className="stat-card clickable-card"
+          onClick={() => navigate("/tasks")}
+        >
           <div className="stat-icon">✓</div>
 
           <div>
             <p>Total Tasks</p>
-            <h2>{todos.length}</h2>
+            <h2>{total}</h2>
           </div>
         </div>
 
-        <div className="stat-card">
+
+        {/* PENDING */}
+
+        <div
+          className="stat-card clickable-card"
+          onClick={() =>
+            navigate("/tasks?filter=pending")
+          }
+        >
           <div className="stat-icon">⏳</div>
 
           <div>
@@ -54,7 +70,15 @@ function Home() {
           </div>
         </div>
 
-        <div className="stat-card">
+
+        {/* COMPLETED */}
+
+        <div
+          className="stat-card clickable-card"
+          onClick={() =>
+            navigate("/tasks?filter=completed")
+          }
+        >
           <div className="stat-icon">✓</div>
 
           <div>
@@ -63,7 +87,13 @@ function Home() {
           </div>
         </div>
 
-        <div className="stat-card">
+
+        {/* IMPORTANT */}
+
+        <div
+          className="stat-card clickable-card"
+          onClick={() => navigate("/important")}
+        >
           <div className="stat-icon">★</div>
 
           <div>
@@ -75,14 +105,23 @@ function Home() {
       </div>
 
 
+      {/* ================= MAIN DASHBOARD ================= */}
+
       <div className="dashboard-main">
+
+
+        {/* ================= TODAY'S TASKS ================= */}
 
         <section className="task-section">
 
           <div className="section-header">
+
             <div>
               <h2>Today's Tasks</h2>
-              <p>Your latest tasks</p>
+
+              <p>
+                Your latest tasks
+              </p>
             </div>
 
             <button
@@ -91,8 +130,11 @@ function Home() {
             >
               + Add Task
             </button>
+
           </div>
 
+
+          {/* NO TASKS */}
 
           {todos.length === 0 ? (
 
@@ -117,35 +159,43 @@ function Home() {
 
           ) : (
 
+            /* TASK LIST */
+
             <div className="home-tasks">
 
               {todos.slice(0, 5).map((todo) => (
 
                 <div
                   className={`home-task ${
-                    todo.completed ? "completed" : ""
+                    todo.completed
+                      ? "completed"
+                      : ""
                   }`}
                   key={todo.id}
                 >
 
-                  <div className="task-circle">
-                    {todo.completed ? "✓" : ""}
-                  </div>
+                  {/* Task Information */}
 
-                  <div className="home-task-info">
+                 <div className="home-task-info">
 
-                    <h3>{todo.text}</h3>
+                  <h3>{todo.text}</h3>
 
-                    <p>
-                      {todo.date || "Today"}
+                  {todo.date && (
+                    <p className="home-task-date">
+                      📅 {todo.date}
                     </p>
+                  )}
 
-                  </div>
+                </div>
+
+                  {/* IMPORTANT */}
 
                   {todo.important && (
+
                     <span className="important-star">
                       ★
                     </span>
+
                   )}
 
                 </div>
@@ -159,36 +209,102 @@ function Home() {
         </section>
 
 
+        {/* ================= TASK PROGRESS ================= */}
+
         <section className="progress-card">
 
           <h2>Task Progress</h2>
 
-          <div className="progress-circle">
 
-            <span>
-              {todos.length
-                ? Math.round(
-                    (completed / todos.length) * 100
-                  )
-                : 0}
-              %
-            </span>
+          {/* DONUT */}
+
+          <div
+            className={`progress-donut ${
+              total === 0
+                ? "empty-progress"
+                : ""
+            }`}
+            style={{
+              "--progress":
+                `${completedPercentage * 3.6}deg`,
+            }}
+          >
+
+            <div className="donut-inner">
+
+              <strong>
+                {completedPercentage}%
+              </strong>
+
+              <span>
+                Completed
+              </span>
+
+            </div>
 
           </div>
 
-          <p>
-            Keep going! Complete your remaining tasks.
+
+          {/* MESSAGE */}
+
+          <p className="progress-message">
+
+            {total === 0
+              ? "No tasks yet."
+              : completed === total
+              ? "All tasks completed! 🎉"
+              : "Keep going! Complete your remaining tasks."
+            }
+
           </p>
+
+
+          {/* PROGRESS DETAILS */}
 
           <div className="progress-info">
 
-            <span>
-              <b>{completed}</b> Completed
-            </span>
 
-            <span>
-              <b>{pending}</b> Pending
-            </span>
+            {/* COMPLETED */}
+
+            <div className="progress-stat">
+
+              <span className="progress-dot completed-dot" />
+
+              <div>
+
+                <strong>
+                  {completed}
+                </strong>
+
+                <small>
+                  Completed
+                </small>
+
+              </div>
+
+            </div>
+
+
+            {/* PENDING */}
+
+            <div className="progress-stat">
+
+              <span className="progress-dot pending-dot" />
+
+              <div>
+
+                <strong>
+                  {pending}
+                </strong>
+
+                <small>
+                  Pending
+                </small>
+
+              </div>
+
+            </div>
+
 
           </div>
 
