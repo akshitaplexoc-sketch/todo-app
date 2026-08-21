@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages-new -d dist"
-
-  },
+  "dev": "vite",
+  "build": "vite build",
+  "postbuild": "node scripts/copy-404.js",
+  "lint": "eslint .",
+  "preview": "vite preview",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d dist"
+},
   "dependencies": {
     "lucide-react": "^1.31.0",
     "nodemon": "^3.1.14",
