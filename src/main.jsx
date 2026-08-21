@@ -7,9 +7,11 @@ import { TodoProvider } from "./context/TodoContext";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 
+const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter basename="/todo-app/">
+    <BrowserRouter basename={basename}>
     <TodoProvider>
       <App />
     </TodoProvider>
